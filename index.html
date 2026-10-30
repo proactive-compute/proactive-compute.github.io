@@ -1,0 +1,164 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="color-scheme" content="light dark">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Scaling Proactive Compute</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&family=Literata:ital,opsz,wght@0,7..72,400;0,7..72,600;1,7..72,400&display=swap">
+<link rel="stylesheet" href="site.css?v=20261030">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css" crossorigin="anonymous">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js" crossorigin="anonymous"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js" crossorigin="anonymous"
+  onload="renderMathInElement(document.querySelector('details.metric'), {delimiters: [{left: '\\[', right: '\\]', display: true}, {left: '\\(', right: '\\)', display: false}]});"></script>
+</head>
+<body>
+<header class="hero">
+<div class="hero-text">
+  <h1>Scaling Proactive Compute: When Agents Anticipate the Task</h1>
+  <div class="authors"><span class="au"><a href="https://shayantalaei.com/">Shayan Talaei</a><sup>1*</sup></span>, <span class="au"><a href="https://www.ginojc.com/">Gino Chiaranaipanich</a><sup>1*</sup></span>, <span class="au">Amirreza Zeinali<sup>1</sup></span>, <span class="au">Amir Youssefi<sup>2</sup></span>, <span class="au">Azalia Mirhoseini<sup>1†</sup></span>, <span class="au">Amin Saberi<sup>1†</sup></span></div>
+  <div class="affil"><span><sup>1</sup>Stanford University</span> <span><sup>2</sup>Meta</span></div>
+  <div class="eq"><sup>*</sup>Equal contribution, <sup>†</sup>Equal senior authorship · October 2026</div>
+  <div class="logo-row">
+    <img class="lg-stanford" src="logos/stanford.png" alt="Stanford University">
+    <img class="lg-meta" src="logos/meta.svg" alt="Meta">
+    <img class="lg-sil" src="logos/sil_dragon.png" alt="Scaling Intelligence Lab">
+  </div>
+  <div class="pills"><a class="pill" href="https://arxiv.org/abs/XXXX.XXXXX"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 1h7l3 3v11H3z M10 1v3h3 M5 7h6 M5 9.5h6 M5 12h4" fill="none" stroke="currentColor" stroke-width="1.4"/></svg><span>Paper</span></a><a class="pill" href="https://github.com/ScalingIntelligence/ProactiveCompute"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 0a8 8 0 0 0-2.5 15.6c.4 0 .5-.2.5-.4v-1.5c-2.2.5-2.7-1-2.7-1-.4-.9-.9-1.2-.9-1.2-.7-.5.1-.5.1-.5.8.1 1.2.8 1.2.8.7 1.3 1.9.9 2.3.7.1-.5.3-.9.5-1.1-1.8-.2-3.6-.9-3.6-4 0-.9.3-1.6.8-2.1-.1-.2-.4-1 .1-2.1 0 0 .7-.2 2.2.8a7.4 7.4 0 0 1 4 0c1.5-1 2.2-.8 2.2-.8.4 1.1.2 1.9.1 2.1.5.6.8 1.3.8 2.1 0 3.1-1.9 3.7-3.6 3.9.3.3.5.8.5 1.5v2.2c0 .2.1.5.6.4A8 8 0 0 0 8 0z" fill="currentColor"/></svg><span>Code</span></a><a class="pill" href="#bibtex"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M2 9h4v5H2z M2 9c0-3 1-5 4-6 M10 9h4v5h-4z M10 9c0-3 1-5 4-6" fill="none" stroke="currentColor" stroke-width="1.5"/></svg><span>BibTeX</span></a></div>
+</div>
+<div class="hero-fig">
+<figure class="fig wide" data-fig="timeline" data-alt="Schematic timeline of a proactive and a reactive agent">
+  <div class="stage"></div>
+  <figcaption><b>Environment–agent interaction timelines for proactive and reactive agents.</b> Before a task arrives (offline), the proactive agent studies the available context. After the task arrives (online), it uses the time spent waiting for tool results to anticipate possible outcomes and prepare its next steps. A reactive agent (bottom) remains idle during both periods.</figcaption>
+</figure>
+
+</div>
+</header>
+
+<div class="shell"><main>
+
+<p class="readtime">8 min read</p>
+<div class="tldr"><b>TLDR</b>Agents often have access to the context of their environment, such as a code repository or a company’s filesystem, long before a task arrives. Yet they spend much of their time waiting, first for the task and then for each tool call to return. We let agents use this time to anticipate the task: they study the context before the task arrives and plan ahead while their tools run. We scale this <em>proactive compute</em> precisely, across nine benchmarks and four model families, and past a single context window with multiple agents. We show that proactive compute can substitute for test-time compute: proactive agents reach higher accuracy at small test-time budgets with far fewer tool calls, and agents that work while their tools run get ahead in wall-clock time. When tasks share a context, proactive study pays for itself. We expect a large portion of agents in the future to be proactive, and view proactive compute as another axis of scaling, complementary to test-time compute.</div>
+
+<h2 id="why">Agents sit idle before the task arrives and while their tools run</h2>
+<p>Test-time compute predictably improves performance <span class="cite">[<a href="https://arxiv.org/abs/2407.21787" target="_blank" rel="noopener" title="Brown et al., 2024">1</a>, <a href="https://arxiv.org/abs/2408.03314" target="_blank" rel="noopener" title="Snell et al., 2024">2</a>, <a href="https://arxiv.org/abs/2501.19393" target="_blank" rel="noopener" title="Muennighoff et al., 2025">3</a>]</span>, but agents usually spend it reactively, generating tokens only after a task or tool result arrives. A reactive agent on MLE-Bench generates tokens for only 5–16% of a two-hour session, even though it already has the context of the task (a code repository, a filesystem) or knows its likely next steps.</p>
+<p>Instead, agents can spend compute <em>proactively</em>: they can study the available context before a task arrives <span class="cite">[<a href="https://arxiv.org/abs/2504.13171" target="_blank" rel="noopener" title="Lin et al., 2025">4</a>]</span>, or plan ahead while they wait for tool results <span class="cite">[<a href="https://arxiv.org/abs/2605.22154" target="_blank" rel="noopener" title="Choi et al., 2026">5</a>]</span>. This compute can often run while GPUs are otherwise idle, which keeps its cost low. Our contribution is treating proactive compute as a budget to scale precisely. We sweep the proactive study budget from 64 tokens to 128k, split it across agents to go beyond a single context window, and measure how accuracy, latency, and cost change with scale.</p>
+
+<figure class="fig wide" data-fig="sessions" data-alt="Four sessions on the same repository, without and with a proactive study: without it, each session explores the repository before it solves; with it, the repository is explored once while idle and every session starts from the study notes">
+  <div class="stage"></div>
+  <figcaption><b>Four reactive and four proactive agents working on one repository.</b> Without a study, the reactive agents re-explore the repository before solving the task. With the study, each proactive agent starts the session with knowledge of the repository, so it skips the redundant exploration. Bar lengths are illustrative, and tasks are shortened from SWE-QA-Pro tasks.</figcaption>
+</figure>
+
+<h2 id="setup">Proactive agents use idle time to study the context and plan ahead</h2>
+<p>In the offline setting, when the agent is waiting for its task, the agent explores the context <i>C</i> before the task <i>q</i> arrives and writes a trace of <i>P</i> tokens, which we call the <em>study</em>. When the task <i>q</i> arrives, the study stays in its history, and the same agent, now the <em>solver</em>, solves the task using <i>T</i> test-time tokens. In the online setting, when the agent is waiting for a tool result, it writes up to <i>P</i> tokens per tool call while the call runs.</p>
+
+<p>We control both budgets exactly with budget forcing <span class="cite">[<a href="https://arxiv.org/abs/2501.19393" target="_blank" rel="noopener" title="Muennighoff et al., 2025">3</a>]</span>. If the model stops early, we tell it to keep going, and if it goes over, we cut it off at our desired budget. We sweep <i>P</i> from 0 to 128k and <i>T</i> from 64 to 64k tokens (k = 1,024). This post shows five benchmarks: two software-engineering benchmarks, SWE-QA-Pro <span class="cite">[<a href="https://arxiv.org/abs/2603.16124" target="_blank" rel="noopener" title="Cai et al., 2026">6</a>]</span> and StudyBench <span class="cite">[<a href="#r-sb" title="Li et al., 2026">7</a>]</span>; two algorithmic reasoning benchmarks, ARC-AGI-1 <span class="cite">[<a href="https://arxiv.org/abs/1911.01547" target="_blank" rel="noopener" title="Chollet, 2019">8</a>]</span> and MIR-Bench <span class="cite">[<a href="https://arxiv.org/abs/2502.09933" target="_blank" rel="noopener" title="Yan et al., 2025">9</a>]</span>; and one legal knowledge-work benchmark, Harvey LAB <span class="cite">[<a href="https://www.harvey.ai/blog/introducing-harveys-legal-agent-benchmark" target="_blank" rel="noopener" title="Grupen et al., 2026">10</a>]</span>. The paper adds four math benchmarks <span class="cite">[<a href="https://arxiv.org/abs/2505.23281" target="_blank" rel="noopener" title="Balunović et al., 2026">11</a>]</span>.</p>
+
+<figure class="fig wide" data-fig="study" data-alt="A robot in a red cloak meditates while the real study trace streams by and a tree of files read in the cekit repository grows; then three questions are answered with and without the study">
+  <div class="stage"></div>
+  <figcaption><b>Proactive studying pre-explores the repository.</b> DeepSeek-V4-Flash studies the cekit repository for 131,072 tokens and reads 141 of its 177 files. Each dot in the tree is a file, colored by the study budget at which it is first read. After the study, three SWE-QA-Pro tasks arrive: grey bars are tool calls without the study, green bars are tool calls with it, and the number is the judge’s rubric-based score.</figcaption>
+</figure>
+
+<h2 id="offline">Proactive compute substitutes for test-time compute</h2>
+<p>Studying helps most when latency (time to answer) is critical and the solver has little budget at test time. With a 128k-token study, DeepSeek-V4-Flash on SWE-QA-Pro reaches at <i>T</i> = 64 the accuracy that it needs about 850 test-time tokens to reach without a study: 13× fewer tokens (72% against 40% at <i>T</i> = 64, 3 seeds). Across the paper’s benchmarks this factor runs from 7× on StudyBench to 221× on AIME 2025.</p>
+
+<details class="metric">
+  <summary>Test-time efficiency <i>E</i></summary>
+  <p>Test-time efficiency is the ability to achieve higher accuracy at lower test-time budgets. To summarize the whole accuracy–<i>T</i> curve in a single number, we adapt the expertise metric of Machine Studying <span class="cite">[<a href="#r-sb" title="Li et al., 2026">7</a>]</span> and define <i>E</i> as the area under the curve with <i>T</i> on a log scale, normalized by the curve’s width. Each doubling of <i>T</i> counts equally:</p>
+  <div class="eqn">\[ E(P) = \frac{\sum_k w_k \, \tfrac{1}{2}\big(a_k + a_{k+1}\big)}{\sum_k w_k}, \qquad a_k = \mathrm{acc}(P, T_k), \quad w_k = \log_2 \frac{T_{k+1}}{T_k}, \]</div>
+  <p class="eqn-note">where \(T_1 < T_2 < \dots\) are the tested budgets.</p>
+</details>
+
+<figure class="fig wide" data-fig="offline" data-alt="Accuracy against test budget as the study budget grows, with the efficiency gain shaded">
+  <div class="stage"></div>
+  <figcaption><b>Accuracy against test budget as the study grows from 64 to 128k tokens (left), and the test-time efficiency <i>E</i> of each curve (right).</b> Grey points have no study, green points have a study of <i>P</i> tokens, and the shaded area between the curves is the gain in <i>E</i>. The box below the plots shows an example context <i>C</i> and task <i>q</i> from the selected benchmark.</figcaption>
+</figure>
+
+
+<h2 id="how">Proactive agents save tool calls and thinking tokens while keeping accuracy</h2>
+<p>With the study in context, the solver makes fewer tool calls: at the largest test budget, a 128k study cuts tool calls by 10× on StudyBench, 4× on SWE-QA-Pro and 1.7× on Harvey LAB. When the solver sets its own budget, a 16k study on SWE-QA-Pro more than halves its thinking and cuts its tool calls tenfold at matched accuracy.</p>
+
+<figure class="fig wide" data-fig="tools" data-alt="Tool calls per task against test budget, and natural thinking tokens against study budget, for three benchmarks">
+  <div class="stage"></div>
+  <figcaption><b>Tool calls per task against test budget (top) and uncapped thinking tokens against study budget (bottom).</b> Arrows show the drop from no study to the largest study. DeepSeek-V4-Flash, 30 tasks per benchmark, 3 seeds.</figcaption>
+</figure>
+
+<h2 id="amortize">When tasks share a context, proactive compute pays for itself and then can save millions of tokens</h2>
+<p>When <i>n</i> tasks share one context, each task costs <i>P</i>/<i>n</i> + <i>T</i>*<sub><i>P</i></sub> tokens, where <i>T</i>*<sub><i>P</i></sub> is the test-time budget needed to achieve a certain performance given a study of budget <i>P</i>. Longer studies take more tasks to break even (7–10 tasks at 16k, against 13–33 at 64k), and they usually save more afterwards.</p>
+
+<figure class="fig wide">
+  <div class="stage"><img src="fig46_amort_savings.png" alt="Tokens saved against the number of tasks sharing one context, for 16k, 32k and 64k studies on SWE-QA-Pro, StudyBench and Harvey LAB" style="display:block;width:100%;height:auto"></div>
+  <figcaption><b>Tokens saved over not studying, as more tasks share one context,</b> at a fixed target accuracy per benchmark (80% on SWE-QA-Pro, 40% on StudyBench, 60% on Harvey LAB). Dots mark break-even points, numbers give the token savings after 1,024 tasks, and savings past the task counts we measured are extrapolated. DeepSeek-V4-Flash, 3 seeds.</figcaption>
+</figure>
+
+<h2 id="harvey">Structured, multi-agent studying scales proactive compute past one context window</h2>
+<p>Harvey LAB is a 134M-token filesystem of legal matters from a fictitious law firm <span class="cite">[<a href="https://www.harvey.ai/blog/introducing-harveys-legal-agent-benchmark" target="_blank" rel="noopener" title="Grupen et al., 2026">10</a>]</span>, which far exceeds the size of one context window. A wiki-style study, prompted to explore as if building a wiki over the filesystem, is more efficient than a plain study at every budget (<i>E</i> ≈ 0.47 against 0.40). To go past one context window, we spread the study over multiple agents with 131k tokens each, in parallel over partitions of the filesystem or serially with notes passed along, similar to compaction. With eight parallel agents, the study reaches <i>E</i> = 0.585, against 0.458 for RAG <span class="cite">[<a href="https://arxiv.org/abs/2005.11401" target="_blank" rel="noopener" title="Lewis et al., 2021">12</a>]</span> and 0.515 for RLM <span class="cite">[<a href="https://arxiv.org/abs/2512.24601" target="_blank" rel="noopener" title="Zhang et al., 2025">13</a>]</span>. A cheap hierarchical summary, which reads the opening of each document and writes one page per folder, does as well (<i>E</i> = 0.589) at under a third of the cost ($0.41 against $1.36).</p>
+
+<figure class="fig wide" data-fig="harvey" data-alt="Test-time efficiency against study cost for study strategies and baselines, and documents read against study tokens">
+  <div class="stage"></div>
+  <figcaption><b>Test-time efficiency against study cost for each studying method.</b> Pick a method to highlight it. DeepSeek-V4-Flash, 120 tasks; 3 seeds for single-agent studies, 1 seed otherwise.</figcaption>
+</figure>
+
+<h2 id="online">Agents that work while commands run beat the median human 2× sooner</h2>
+<p>On eight MLE-Bench tasks <span class="cite">[<a href="https://arxiv.org/abs/2410.07095" target="_blank" rel="noopener" title="Chan et al., 2025">14</a>]</span>, an agent works in a shell for two hours on a single B200. While a command runs, the proactive agent keeps working for up to 1k, 4k or 16k tokens; the reactive agent sits idle. We compare each agent against the median score of the human Kaggle entrants on the task. Half of the 16k agent’s sessions beat it after 24 minutes, compared to 49 minutes for the reactive agent, partly because it submits its first valid file sooner (11 against 25 minutes). This speed-up also costs tokens: to reach the median human’s score, the 16k agents generate about 1.7× as many tokens as the reactive agents do.</p>
+
+<figure class="fig wide" data-fig="online" data-alt="Best score so far over a two-hour session for eight tasks and four agents">
+  <div class="stage"></div>
+  <figcaption><b>Share of seeds that have beaten the median human, per task (top), share of the session spent generating tokens (bottom left) and the split of the session so far (bottom right).</b> Grey curves are reactive agents, green curves are proactive agents. DeepSeek-V4-Flash-0731, 32 seeds per task; bands are 95% CIs.</figcaption>
+</figure>
+
+<p>The 16k agents spend 32% of the session generating tokens, while reactive agents sit at 10%. The 16k agents are still idle 68% of the time: 16k tokens take about two minutes to generate, while a command runs for 7.5 minutes on average.</p>
+
+<h2 id="conclusion">A future full of proactive agents</h2>
+<p>Proactive compute lets an agent prepare for a task before it arrives and keep working while its tools run. The gains <em>scale</em> with the proactive budget, <em>pay for themselves</em> when tasks share a context, and extend <em>beyond</em> one context window with multiple agents. As agents run for days and supervise tool calls that take minutes to hours, the time they spend waiting keeps growing, and so does the room for proactive compute. Many questions remain open, such as how to update a study as the context changes, how to tell when a study has done enough, and how much training can improve an agent’s studying.</p>
+<p>Looking forward, we envision more proactive agents that live in their environments, from codebases and file systems to shared workspaces and the web. Such agents can spend the time between requests, and the time they wait on their tools, getting to know their environment and anticipating what comes next, so that they are ready before they are asked.</p>
+<p>Why does a study help, and how small can it get before it stops helping? See <a href="https://proactive-compute.stanford.edu">the paper</a> for the full results.</p>
+
+<figure class="fig wide closing"><img src="civ.jpg" alt="A pixel-art landscape of many small robot agents on hills and in a town, all looking up at thought bubbles that hold future tasks; nearer agents are large, distant ones small." width="1536" height="1024"></figure>
+
+<section class="bib" id="bibtex">
+<h2>BibTeX</h2>
+<pre><code>@misc{talaei2026proactive,
+  title  = {Scaling Proactive Compute: When Agents Anticipate the Task},
+  author = {Talaei, Shayan and Chiaranaipanich, Gino and Zeinali, Amirreza and
+            Youssefi, Amir and Mirhoseini, Azalia and Saberi, Amin},
+  year   = {2026},
+  url    = {https://arxiv.org/abs/XXXX.XXXXX}
+}</code></pre>
+</section>
+
+<h2 id="acks">Acknowledgements</h2>
+<p>TBD</p>
+
+<h2 id="refs">References</h2>
+<ol class="refs">
+  <li id="r-brown">Brown et al. (2024). Large Language Monkeys: Scaling Inference Compute with Repeated Sampling.</li>
+  <li id="r-snell">Snell et al. (2024). Scaling LLM Test-Time Compute Optimally Can Be More Effective than Scaling Model Parameters.</li>
+  <li id="r-s1">Muennighoff et al. (2025). s1: Simple Test-Time Scaling.</li>
+  <li id="r-lin">Lin et al. (2025). Sleep-time Compute: Beyond Inference Scaling at Test-time. arXiv:2504.13171.</li>
+  <li id="r-choi">Choi et al. (2026). IdleSpec: Exploiting Idle Time via Speculative Planning for LLM Agents. arXiv:2605.22154.</li>
+  <li id="r-swe">Cai et al. (2026). SWE-QA-Pro: A Representative Benchmark and Scalable Training Recipe for Repository-Level Code Understanding. arXiv:2603.16124.</li>
+  <li id="r-sb">Li et al. (2026). Machine Studying.</li>
+  <li id="r-arc">Chollet (2019). On the Measure of Intelligence. arXiv:1911.01547.</li>
+  <li id="r-mir">Yan et al. (2025). MIR-Bench: Can Your LLM Recognize Complicated Patterns via Many-Shot In-Context Reasoning? arXiv:2502.09933.</li>
+  <li id="r-harvey">Grupen et al. (2026). Open-Sourcing Harvey's Long Horizon Legal Agent Benchmark.</li>
+  <li id="r-matharena">Balunović et al. (2026). MathArena: Evaluating LLMs on Uncontaminated Math Competitions. arXiv:2505.23281.</li>
+  <li id="r-rag">Lewis et al. (2021). Retrieval-Augmented Generation for Knowledge-Intensive NLP Tasks. arXiv:2005.11401.</li>
+  <li id="r-rlm">Zhang et al. (2025). Recursive Language Models. arXiv:2512.24601.</li>
+  <li id="r-mle">Chan et al. (2025). MLE-bench: Evaluating Machine Learning Agents on Machine Learning Engineering. arXiv:2410.07095.</li>
+</ol>
+</main></div>
+<script>
+// in-page links scroll without writing a #hash into the URL, and a hash left from an earlier visit is cleared,
+// so the page always opens at the top (a stored #bibtex made it open at the bottom)
+if (location.hash) { history.replaceState(null, '', location.pathname + location.search); scrollTo(0, 0); }
+document.addEventListener('click', e => { const a = e.target.closest('a[href^="#"]'); if (!a) return; const t = document.getElementById(a.getAttribute('href').slice(1)); if (t) { e.preventDefault(); t.scrollIntoView({ behavior: 'smooth' }); } });
+</script>
+<script src="anim.js?v=20261030"></script>
+</body>
+</html>
+
+</body></html>
